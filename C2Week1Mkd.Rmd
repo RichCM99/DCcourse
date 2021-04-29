@@ -1,0 +1,105 @@
+---
+title: "C1Week1Mkd"
+output: html_notebook
+---
+para convertir el tipo de los datos de un vector usamos
+as.numeric(), as.complex(), as.logical(), por ejemplo
+```{r}
+x<-c(0:6)
+as.logical(x)
+```
+Para indexar en listas se comienza desde 1
+```{r}
+y<-list(1,2,"3")
+y[[1]]
+```
+##**Tipos de elementos en R y funciones**
+
+
+**Matrices**
+```{r}
+m<-matrix(1:6, nrow = 2, ncol = 3)
+```
+matriz de 2x3 que se contruye por columnas, otra forma de hacerlo
+```{r}
+x<-1:10
+dim(x)<-c(2,5) #creamos una matriz de 2x5 
+```
+otra forma
+```{r}
+a<-1:3
+b<-45:47
+cbind(a,b) # la matriz toma por columnas los valores de a y b
+```
+```{r}
+rbind(a,b) # la matriz toma por filas los valores de a y b
+```
+
+**Factores**
+Se usan para representar categorías, pueden ser ordenados o no ordenados
+```{r}
+h<-factor(c("yes","no", "yes","yes"))
+# en este caso los niveles (categorías son "yes" y "no")
+table(h) # nos dice cuantos elementos hay en cada categoría
+```
+para hacer que los niveles estén ordenados hacemos los siguiente
+```{r}
+w<-factor(c("yes","no","yes","no","yes"), levels = c("yes","no"))
+w
+```
+**Valores faltantes**
+se utilizan las funciones is.na() is.nan()
+```{r}
+z<-c(1,2,3,4,NA)
+is.na(z) # nos dice que en la ultima entrada hay un NA
+is.nan(z) # no hay ningun NSN en el vector
+```
+
+**data frame**
+Ejemplo
+```{r}
+df<-data.frame(foo=1:4,bar=c(T,T,F,F))
+df
+```
+
+
+##**Leyendo datos en R**
+lectura de datos en tablas
+algunas funciones son
+1- read.table, read csv <- devuelven un data frame en R
+2- read.Lines<- para leer las lineas de un texto
+3- source <- para leer en R archivos de codigo (inverse of dump)
+4- dget <- para leer en R archivos de codigo (inverse of dput)
+5- load <- para leer documentos en el workspace
+6- unserialize <- para leer objetos simples de R de forma binaria
+
+**read.table() argumentos**
+file, el nombre del archivo o el nombre de la conexion
+header, indicador logico por si el archivo tiene titulo
+sep, cadena que indica como las columnas estan separadas
+colClasses, vector de caracteres que indica la clase de cada columa en el archivo
+nrows, numero de filas del archivo
+comment.char, cadena de caracteres que indica cual es el caracter de comentarios
+skip, numero de lineas a saltar desde el principio
+strinsAsFactors, los valores de caracteres deberian ser codificados como factores?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
