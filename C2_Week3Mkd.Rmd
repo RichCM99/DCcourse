@@ -1,0 +1,204 @@
+---
+title: "C2Week3Mkd"
+output: html_document
+---
+*Funciones "loop"*
+
+*1.-* lapply
+
+Esta funcion toma 3 argumentos: 1) una lista, digamos x, 2) una funcion (o el nombre de la funcion ), digamos "mean", 3) otros argumentos, indicado por los 3 puntos (...). En el caso del primer argumento, es necesario usar una lista, sino convertirla a una con as.list.
+
+Siempre lo obtenido sera una lita.
+```{r}
+x <- list(a = 1:5, b = rnorm(10))
+lapply(x, mean)
+# aqui lo que ocurre es que se saco la media de x y de b por separado
+```
+```{r}
+x <-list(a = 1:4, b = rnorm(10), c = rnorm(20,1), d = rnorm(100,5))
+lapply(x, mean)
+```
+```{r}
+x <- 1:4
+lapply(x, runif)
+# en este caso, en la lista resultante, en el primer elemento se nos genero un numero aleatorio con distribucion uniforme, en el segundo elemento fueron dos y asi sucesivamente hasta llegar a 4 numeros aleatorios uniformes 0,1
+```
+```{r}
+x <- 1:4
+lapply(x, runif, min = 0, max = 10)
+# Ajustamos los parametros para que se nos generaran las mismas listas del ejemplo pasado pero con uniformes de parametros 0,10
+```
+*2.-* Sapply
+
+Esta funcion funciona de manera analoga a lapply pero trata de simplificar el resultado, por ejemplo, si el resultado es una lista donde cada elemento es de longitud 1, entonces el resultado sera un vector, si el resultado es una lista donde cada elemento es un vector de la misma longitud, una matriz sera el resultado, si no puede interpretar mas cosas, una lista sera devuelta.
+
+```{r}
+x <-list(a = 1:4, b = rnorm(10), c = rnorm(20,1), d = rnorm(100,5))
+sapply(x, mean)
+```
+*3.-* apply
+
+Es usada para evaluar una funcion (usualmente una funcion anonima) sobre los margenes de algun arreglo.
+
+Es comunmente usado para aplicar una funcion a las filas o columnas de una matriz, tambien puede ser usado para arreglos generales, por ejemplo, calcular el promedio de un arreglo de matrices. No es mas rapido que un "loop", pero funciona en una linea.
+
+Algunos de sus perimetros son:
+
+
+x <- es un arreglo
+
+MARGIN <- es un vector de enteros que indica que margenes de deberian recuperar
+
+FUN <- es la funcion que sera aplicada
+
+... <- es para que se puedan poner otros parametros de la funcion FUN
+
+```{r}
+x <- matrix(rnorm(200), 20, 10)
+# hemos creado una matriz de 20 filas por 10 columnas
+
+apply(x, 2, mean)
+# nos regresa la media de cada columna de la matriz
+# MARGIN = 2, se puede pensar como si colapsaramos la dimension de las filas y nos quedaramos solo con las columnas, en caso de querer la media de cada fila, deberiamos haber puesto MARGIN = 1
+```
+```{r}
+apply(x, 1, sum)
+# obtenemos la suma de cada fila de la matriz
+```
+Para sacar sumas y promedios de una matriz, tenemos algunos atajos
+
+rowSums = apply(x, 1, sum)
+
+rowMeans = apply(x, 1, mean)
+
+colSums = apply(x, 2, sum)
+
+colMeans = apply(x, 2, mean)
+
+Estos atajos son mas rapidos para arreglos muy grandes
+
+```{r}
+x <- matrix(rnorm(200), 20, 10)
+apply(x, 1, quantile, probs = c(0.25, 0.75))
+
+# calculamos los percentiles 25% y 75% de cada fila
+# obtendremos una matriz que va a tener dos filas y 20 columnas
+```
+```{r}
+a <- array(rnorm(2 * 2 * 10), c(2, 2, 10))
+apply(a, c(1, 2), mean)
+# en el arreglo, la primera entrada es una matriz tridimensional 2 x 2 10 entradas
+# con MARGIN = c(1, 2) "colapsamos" la tercera dimension del arreglo 
+```
+```{r}
+rowMeans(a, dims = 2)
+# esto es una manera analoga de hacerlo
+```
+
+*3.-* mapply
+
+Funciona como un "apply" multivariado, ya que aplica la funcion que queramos a algun conjunto de argumentos.
+
+Algunos argumentos son:
+
+FUN <- la funcion a aplicar, dicha funcion debe de tomar tantos argumentos como objetos que             estamos pasando
+
+... <- contiene los argumentos a aplicar
+
+MoreArgs <- es una lista de otros argumentos de la funcion FUN
+
+SIMPLYFY <- indica si el resultado deberia ser simplificado
+```{r}
+formadificil <- list(rep(1,4), rep(2,3), rep(3,2), rep(4,1))
+# la funcion rep(1,4) repite 4 veces el 1
+# para hacerlo facil, usamos mapply
+mapply(rep, 1:4, 4:1)
+```
+```{r}
+noise <- function(n, mean, sd){
+  rnorm(n, mean, sd)
+}
+# queremos obtener 1 numero con distribucion normal (1,2), 2 numeros con distribucion normal (2,2), ..., 5 numeros con distribucion normal (5,2)
+# noise (1:5, 1:5, 2) no nos dará el resultado buscado, por lo que usaremos mapply
+mapply(noise, 1:5, 1:5, 2)
+```
+*3.-* tapply
+
+Se usa para aplicar una funcion a un subconjunto de un vector.
+
+Algunos de sus argumentos son:
+
+x <- el vector
+
+INDEX <- es un factor o una lista de factores de la misma longitud
+
+FUN <- es la funcion para ser aplicada
+
+... <- son los demas argumentos para pasarle a la funcion FUN
+
+simplify <- por si queremos simplificar el resultado
+
+```{r}
+x <- c(rnorm(10), runif(10), rnorm(10,1))
+f <-gl(3, 10)
+# esta funcion crea el factor que queremos, repitiendo 10 veces cada nivel, es decir, repite 10 veces el nivel 1, ..., repite 10 veces el valor 3
+
+tapply(x, f, mean)
+# nos calculo la media de cada subgrupo de x, como queriamos
+```
+```{r}
+# si no simplificamos el resultado, tenemos lo siguiente
+tapply(x, f, mean, simplify = F)
+```
+```{r}
+# para obtener el rango de las observaciones
+# nos da el minimo y el maximo
+tapply(x, f, range)
+```
+*4.-* split
+
+Split toma un vector u otro objeto y lo separa en grupos determinados por un factor o lista de factores
+
+Sus argumentos son:
+
+x <- es el vector(lista) o data frame
+
+f <- es un factor o una lista de factores
+
+drop <- indica si los niveles de factores vacios deben eliminarse
+
+```{r}
+x <-c(rnorm(10), runif(10), rnorm(10,1))
+f <- gl(3,10) # son los factores asi como lo hicimos antes
+split(x,f)
+```
+Es comun combinar esta funcion con apply y lapply
+
+```{r}
+lapply(split(x,f),mean)
+```
+```{r}
+library(datasets)
+s <- split(airquality, airquality$Month) # el segundo argumento aunque no es un factor, se puede convertir en uno
+
+lapply(s, function(x) colMeans(x[,c("Ozone", "Solar.R", "Wind")]))
+# nos regresa el promedio de ozono, radiacion solar y viento por cada mes
+```
+```{r}
+# para simplificar todo, usaremos sapply
+sapply(s, function(x) colMeans(x[,c("Ozone", "Solar.R", "Wind")]))
+```
+```{r}
+# Para omitir los NA de los calculos hacemos lo siguiente
+sapply(s, function(x) colMeans(x[, c("Ozone", "Solar.R", "Wind")], na.rm = T))
+```
+Ejemplo teniendo dos factores
+
+```{r}
+x <- rnorm(10)
+f1 <- gl(2,5)
+f2 <- gl(5,2)
+f1
+f2
+interaction(f1, f2)
+```
