@@ -1,0 +1,93 @@
+---
+title: "C2Week2Mkd"
+output: html_document
+---
+Ejemplos de funciones
+```{r}
+above <- function(x,n = 10){
+  use <- x >n
+  x[use]
+}
+# nos da el subconjunto de elementos de x en forma de vector, tales que son mayores a n
+```
+```{r}
+columnmean <- function(y){
+  nc <- ncol(y)
+  means <- numeric(nc) # creamos un vector vacio cuyas entradas seran numeros
+  for (i in 1:nc) {
+    means[i] <- mean(y[,1], na.rm = TRUE) # no tomamos en cuenta los valores con NA
+  }
+  means
+}
+columnmean(airquality)
+```
+
+**Argumentos en funciones**
+
+El argumento "..." se usa para indicar un numero de variable de argumentos que usualmente se pasan en otras funciones. 
+
+Se usa cuando queremos extender otra funcion y no quetemos copiar toda la lista de parametros de la funcion original
+```{r}
+myplot <- function(x, y, type = "l", ...){
+  plot(x , y, type = type, ...)    
+}
+```
+
+%--------- Actividad de programacion ----------%
+# Funcion 1
+```{r}
+pollutantmean <- function(directory, pollutant, id = 1:332){
+  # primero fijamos el espacio de trabajo
+  setwd(paste("C:/Users/ricar/OneDrive/Escritorio/R_DC/C2_Week2","/", directory, sep = ""))
+  # creamos un vector para almacenar los datos
+  valores <- numeric()
+  # obtenemos la lista de nombres de archivos 
+  archivos <- list.files()
+  for (i in id) {
+    valores <- c(valores, read.csv(archivos[[i]])[[pollutant]])
+  }
+  resultado <- mean(valores, na.rm = T)
+  resultado
+}
+```
+
+# Funcion 2
+```{r}
+complete <- function(directory, id = 1:332){
+  # primero fijamos el espacio de trabajo
+  setwd(paste("C:/Users/ricar/OneDrive/Escritorio/R_DC/C2_Week2","/", directory, sep = "")) 
+  # crearemos un vector vacio para almacenar los casos completos
+  contador <- numeric()
+  for (i in id) {
+    contador <-c(contador,sum(complete.cases(read.csv(list.files()[[i]]))))
+  }
+  #creamos finalmente el data frame con los datos solicitados
+  df <- data.frame("id" = id, "nobs" = contador)
+  df
+}
+```
+
+# Funcion 3
+```{r}
+corr <- function(directory, threshold = 0){
+  setwd(paste("C:/Users/ricar/OneDrive/Escritorio/R_DC/C2_Week2","/", directory, sep = "")) 
+  
+  threshold <- threshold 
+  # lista de los nombres de archivos en el workspace
+  datanames <- list.files()
+  # obtenemos los ids que cumplen lo que queremos ayudandonos con la funcino anterior
+  fatdf <- complete("specdata")
+  slimdf <- subset.data.frame(fatdf, nobs > threshold)
+  ids <- slimdf$id
+  
+  # creamos vector vacio con los resultados esperados
+  corv <- numeric()
+  for (i in ids) {
+  data <- read.csv(datanames[[i]])
+  gooddf <- data[complete.cases(data),]
+  corv <-c(corv, cor(gooddf$sulfate, gooddf$nitrate))
+}
+corv
+}
+```
+
