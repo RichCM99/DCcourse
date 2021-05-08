@@ -100,27 +100,3 @@ La funcion summaryRprof() resume la salida de Rprof() (de otra manera no es legi
 NUNCA USAR system.time() y Rprof() JUNTAS.
 
 Al usar la funcion summaryRprof(), hay dos formas de normalizar los datos: "by.total" <- que divide el tiempo requerido en cada funcion entre el tiempo total. "by.self" <- hace lo mismo pero primero resta el tiempo requerido en funciones precedentes en la pila de llamada 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
